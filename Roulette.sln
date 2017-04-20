@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roulette.Plugins", "Roulette.Plugins.csproj", "{09009297-2255-8120-42E0-CA322F7BB9D3}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roulette", "Roulette.csproj", "{65F17377-815B-F575-5FF4-FC830050C711}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Roulette.Editor", "Roulette.Editor.csproj", "{6A96F2CD-562E-8381-82CD-77681B643826}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +13,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09009297-2255-8120-42E0-CA322F7BB9D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09009297-2255-8120-42E0-CA322F7BB9D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09009297-2255-8120-42E0-CA322F7BB9D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09009297-2255-8120-42E0-CA322F7BB9D3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{65F17377-815B-F575-5FF4-FC830050C711}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{65F17377-815B-F575-5FF4-FC830050C711}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65F17377-815B-F575-5FF4-FC830050C711}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65F17377-815B-F575-5FF4-FC830050C711}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A96F2CD-562E-8381-82CD-77681B643826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A96F2CD-562E-8381-82CD-77681B643826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A96F2CD-562E-8381-82CD-77681B643826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A96F2CD-562E-8381-82CD-77681B643826}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

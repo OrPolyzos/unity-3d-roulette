@@ -15,9 +15,10 @@ public class Rotate : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         
-        Speed = Speed - subt;
+
         if (Speed >= 0)
         {
+            Speed = Speed - subt;
             transform.Rotate(0, 0, Speed * Time.deltaTime);
         }
     }
@@ -26,7 +27,7 @@ public class Rotate : MonoBehaviour {
     {
         if (col.gameObject.name.Equals("Sphere"))
         {
-            subt = 0.4f;
+            subt = 0.375f;
         }
     }
 }

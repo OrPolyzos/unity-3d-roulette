@@ -7,6 +7,8 @@ public class GameController : MonoBehaviour {
 
 	public GameObject Sphere;
     public GameObject Roulette;
+    public GameObject Camera;
+    public GameObject MessagePanel;
 
 	public Button Jugar;
 	public Sprite JugarNormal;
@@ -33,6 +35,8 @@ public class GameController : MonoBehaviour {
 			Jugar.image.overrideSprite = JugarLit;
 			Sphere.GetComponent<Rigidbody> ().isKinematic = false;
             Roulette.GetComponent<Rotate>().enabled = true;
+            Camera.GetComponent<Movement>().enabled = true;
+            MessagePanel.GetComponent<PanelMovement>().enabled = true;
 		}
 	}
 }
