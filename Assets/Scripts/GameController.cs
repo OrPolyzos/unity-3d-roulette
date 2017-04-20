@@ -6,12 +6,14 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour {
 
 	public GameObject Sphere;
+    public GameObject Roulette;
 
 	public Button Jugar;
 	public Sprite JugarNormal;
 	public Sprite JugarLit;
 	public bool isJugarClicked = false;
-	// Use this for initialization
+	
+    // Use this for initialization
 	void Start () {
 		
 	}
@@ -30,7 +32,7 @@ public class GameController : MonoBehaviour {
 			isJugarClicked = true;
 			Jugar.image.overrideSprite = JugarLit;
 			Sphere.GetComponent<Rigidbody> ().isKinematic = false;
-			Sphere.GetComponent<Rigidbody> ().AddForce (0, 0, -150f, ForceMode.VelocityChange);
+            Roulette.GetComponent<Rotate>().enabled = true;
 		}
 	}
 }

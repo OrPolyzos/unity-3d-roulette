@@ -1,10 +1,14 @@
 fileFormatVersion: 2
 guid: a3c636422ea3f4d499d20ec704dbd5e5
-timeCreated: 1491897125
+timeCreated: 1492623350
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - Sphere: {instanceID: 0}
+  - Jugar: {instanceID: 0}
+  - JugarNormal: {fileID: 21300000, guid: 7796c7180744e46478b49350a75bd7f8, type: 3}
+  - JugarLit: {fileID: 21300000, guid: 627e79fc38f121e409122cf8eeec4820, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

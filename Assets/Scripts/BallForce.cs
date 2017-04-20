@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BallForce : MonoBehaviour {
-    
+
+    public bool Icollided = false;
 
 	// Use this for initialization
 	void Start () {
-        this.GetComponent<Rigidbody>().isKinematic = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+    }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+    void OnCollisionEnter(Collision col)
+    {
+        if (Icollided == false)
         {
-            this.GetComponent<Rigidbody>().isKinematic = false;
+            Icollided = true;
+            this.GetComponent<Rigidbody>().AddForce(0, 0, -100f, ForceMode.VelocityChange);
 
-            this.GetComponent<Rigidbody>().AddForce(0, 0, -150f, ForceMode.VelocityChange);
         }
 
     }
