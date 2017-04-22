@@ -21,7 +21,7 @@ public class PanelMovement : MonoBehaviour {
         {
             if (!IWasMovedUp)
             {
-                iTween.MoveTo(gameObject, iTween.Hash("path", iTweenPath.GetPath("PanelMov"), "time", 12.5));
+                iTween.MoveTo(gameObject, iTween.Hash("path", iTweenPath.GetPath("PanelMov"), "time", 17.5));
                 this.transform.GetChild(0).GetComponent<Text>().text = "The game has started!";
                 IWasMovedUp = true;
             }

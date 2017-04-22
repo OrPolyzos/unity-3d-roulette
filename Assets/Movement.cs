@@ -6,7 +6,7 @@ public class Movement : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        iTween.MoveTo(gameObject, iTween.Hash("path", iTweenPath.GetPath("CameraMov"), "time", 25));
+        iTween.MoveTo(gameObject, iTween.Hash("path", iTweenPath.GetPath("CameraMov"), "time", 45));
 	}
 	
 	// Update is called once per frame

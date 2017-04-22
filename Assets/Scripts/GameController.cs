@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-public class GameController : MonoBehaviour
+public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownHandler, IPointerUpHandler
 {
 
 	public GameObject Sphere;
@@ -25,6 +25,7 @@ public class GameController : MonoBehaviour
     public Sprite[] PlayerSpritesLit = new Sprite[8];
 
     private int[] PlayerCredits = new int[8];
+    private int[] PlayerOriginalCredits = new int[8];
     private int[,] PlayerBets = new int[8, 13];
     private int[] TotalBets = new int[13];
     public string[] PlayerNames = new string[8];
@@ -56,52 +57,59 @@ public class GameController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             PlayerCredits[0] = PlayerCredits[0] + 10;
+            PlayerOriginalCredits[0] = PlayerCredits[0];
             KeepPlayerCreditsUpdated();
             MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Added 10 credits to Player 1!";
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             PlayerCredits[1] = PlayerCredits[1] + 10;
+            PlayerOriginalCredits[1] = PlayerCredits[1];
             KeepPlayerCreditsUpdated();
             MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Added 10 credits to Player 2!";
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             PlayerCredits[2] = PlayerCredits[2] + 10;
+            PlayerOriginalCredits[2] = PlayerCredits[2];
             KeepPlayerCreditsUpdated();
             MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Added 10 credits to Player 3!";
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             PlayerCredits[3] = PlayerCredits[3] + 10;
+            PlayerOriginalCredits[3] = PlayerCredits[3];
             KeepPlayerCreditsUpdated();
             MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Added 10 credits to Player 4!";
         }
         else if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             PlayerCredits[4] = PlayerCredits[4] + 10;
+            PlayerOriginalCredits[4] = PlayerCredits[4];
             KeepPlayerCreditsUpdated();
             MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Added 10 credits to Player 5!";
         }
         else if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             PlayerCredits[5] = PlayerCredits[5] + 10;
+            PlayerOriginalCredits[5] = PlayerCredits[5];
             KeepPlayerCreditsUpdated();
             MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Added 10 credits to Player 6!";
         }
         else if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             PlayerCredits[6] = PlayerCredits[6] + 10;
+            PlayerOriginalCredits[6] = PlayerCredits[6];
             KeepPlayerCreditsUpdated();
             MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Added 10 credits to Player 7!";
         }
         else if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             PlayerCredits[7] = PlayerCredits[7] + 10;
+            PlayerOriginalCredits[7] = PlayerCredits[7];
             KeepPlayerCreditsUpdated();
             MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Added 10 credits to Player 8!";
         }
-
         if (Input.GetMouseButton(0))
         {
             if (EventSystem.current.currentSelectedGameObject != null)
@@ -274,6 +282,53 @@ public class GameController : MonoBehaviour
                 PlayerButtons[i].image.overrideSprite = PlayerSprites[i];
             }
 
+        }
+    }
+    public void CancelClick()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            if (PlayerNames[i] == ActivePlayer)
+            {
+                //int diff = PlayerOriginalCredits[i] - PlayerCredits[i];
+                PlayerCredits[i] = PlayerOriginalCredits[i];
+                for (int j = 0; j < 13; j++)
+                {
+                    int diff = PlayerBets[i, j];
+                    PlayerBets[i, j] = 0;
+                    if (TotalBets[j] != 0)
+                    {
+                        TotalBets[j] = TotalBets[j] - diff;
+                    }
+
+                }
+            }
+        }
+        KeepTotalBetsUpdated();
+        KeepPlayerCreditsUpdated();
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log("here");
+        Debug.Log(EventSystem.current.currentSelectedGameObject.name);
+
+        if (EventSystem.current.currentSelectedGameObject.name == "Cancel")
+        {
+            Debug.Log("first block");
+            int tap = eventData.clickCount;
+            if (tap == 2)
+            {
+                Debug.Log("2 tap block");
+            }
         }
     }
 
