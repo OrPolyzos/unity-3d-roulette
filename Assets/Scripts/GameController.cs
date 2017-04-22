@@ -230,8 +230,11 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 					this.GetComponent<State> ().WinningPlayerName = PlayerNames [i];
 					for (int k = 1; k <= PlayerBets [i, j]; k++) {
 						this.GetComponent<State> ().WinningAmount = (k * 5).ToString();
-						yield return new WaitForSeconds (1);
+                        PlayerCredits[i] = PlayerCredits[i] + 12;
+                        KeepPlayerCreditsUpdated();
+                        yield return new WaitForSeconds (0.5f);
 					}
+
 				}
 			}
 		}
