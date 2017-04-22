@@ -6,6 +6,7 @@ public class Rotate : MonoBehaviour {
 
     public float Speed;
     public float subt;
+    public GameObject EventSystem;
 	// Use this for initialization
 	void Start () {
         Speed = Random.Range(200f,250f);
@@ -14,12 +15,16 @@ public class Rotate : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
-
         if (Speed >= 0)
         {
             Speed = Speed - subt;
             transform.Rotate(0, 0, Speed * Time.deltaTime);
+        }
+        if (EventSystem.GetComponent<State>().GameState.Equals("GameStarted")) {
+            if (Speed <= 0)
+            {
+                EventSystem.GetComponent<State>().GameState = "GameEnded";
+            }
         }
     }
     
