@@ -325,6 +325,30 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 
         }
     }
+
+	public void CancelDblClick()
+	{
+		Debug.Log("inside Cancel Double Click");
+		for (int i = 0; i < 8; i++)
+		{
+			//int diff = PlayerOriginalCredits[i] - PlayerCredits[i];
+				PlayerCredits[i] = PlayerOriginalCredits[i];
+				for (int j = 0; j < 13; j++)
+				{
+					int diff = PlayerBets[i, j];
+					PlayerBets[i, j] = 0;
+					if (TotalBets[j] != 0)
+					{
+						TotalBets[j] = TotalBets[j] - diff;
+					}
+
+				}
+		}
+		KeepTotalBetsUpdated();
+		KeepPlayerCreditsUpdated();
+	}
+
+
     public void CancelClick()
     {
 		Debug.Log("inside Cancel");
