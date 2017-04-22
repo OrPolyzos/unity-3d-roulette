@@ -24,6 +24,7 @@ public class Rotate : MonoBehaviour {
             if (Speed <= 0)
             {
                 EventSystem.GetComponent<State>().GameState = "GameEnded";
+				StartCoroutine( EventSystem.GetComponent<GameController> ().displayAwardInformation ());
             }
         }
     }

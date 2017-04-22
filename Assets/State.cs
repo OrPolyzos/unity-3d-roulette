@@ -5,6 +5,8 @@ using UnityEngine;
 public class State : MonoBehaviour {
 
     public string GameState; 
+	public string WinningPlayerName;
+	public string WinningAmount;
 
 	// Use this for initialization
 	void Start () {

@@ -201,6 +201,34 @@ public class GameController : MonoBehaviour
         }
     }
 
+//	IEnumerator delayforMessage(){
+//		yield return new WaitForSeconds (5);
+//	}
+
+	public IEnumerator displayAwardInformation()
+	{
+		int WinningNumber = 0;
+		if (Sphere.GetComponent<GetTheNumber> ().WinningNumber.Contains ("Sensor N0")) {
+			WinningNumber = 0;
+		} else {
+			 WinningNumber = int.Parse (Sphere.GetComponent<GetTheNumber> ().WinningNumber);
+		}
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 13; j++) {
+				if (PlayerBets [i, j] > 0 && j==WinningNumber) {
+					yield return new WaitForSeconds (2);
+					Debug.Log ("Winning Player is" + PlayerNames[i] + "and Number of Bets" + PlayerBets [i, j]);
+					this.GetComponent<State>().GameState = "AwardInformation";
+					this.GetComponent<State> ().WinningPlayerName = PlayerNames [i];
+					for (int k = 1; k <= PlayerBets [i, j]; k++) {
+						this.GetComponent<State> ().WinningAmount = (k * 5).ToString();
+						yield return new WaitForSeconds (1);
+					}
+				}
+			}
+		}
+	}
+
     public void KeepPlayerBetsUpdated()
     {
         for (int i = 0; i < 8; i++)

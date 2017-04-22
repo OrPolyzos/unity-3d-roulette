@@ -36,5 +36,10 @@ public class PanelMovement : MonoBehaviour {
                 IWasMovedDown = true;
             }
         }
+		else if (EventSystem.GetComponent<State>().GameState.Equals("AwardInformation"))
+		{
+			this.transform.GetChild(0).GetComponent<Text>().text = 
+					EventSystem.GetComponent<State>().WinningPlayerName + " Won: " + EventSystem.GetComponent<State>().WinningAmount + " pesos";
+		}
     }
 }
