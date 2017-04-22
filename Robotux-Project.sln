@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robotux-Project", "Assembly-CSharp-firstpass.csproj", "{71D894ED-0E17-C828-8816-7E8C03D892DB}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robotux-Project", "Assembly-CSharp.csproj", "{13E256C4-06A5-1565-0B64-3385A930F5B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robotux-Project", "Assembly-CSharp-Editor.csproj", "{451B9591-E6EB-5F1A-242E-CA96E603B78D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +13,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71D894ED-0E17-C828-8816-7E8C03D892DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71D894ED-0E17-C828-8816-7E8C03D892DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71D894ED-0E17-C828-8816-7E8C03D892DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71D894ED-0E17-C828-8816-7E8C03D892DB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{13E256C4-06A5-1565-0B64-3385A930F5B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{13E256C4-06A5-1565-0B64-3385A930F5B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13E256C4-06A5-1565-0B64-3385A930F5B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13E256C4-06A5-1565-0B64-3385A930F5B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{451B9591-E6EB-5F1A-242E-CA96E603B78D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{451B9591-E6EB-5F1A-242E-CA96E603B78D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{451B9591-E6EB-5F1A-242E-CA96E603B78D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{451B9591-E6EB-5F1A-242E-CA96E603B78D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,13 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameController.cs">
     <Files>
-      <File FileName="Assets/Scripts/GameController.cs" Line="30" Column="26" />
+      <File FileName="Assets/Scripts/GameController.cs" Line="149" Column="6" />
+      <File FileName="Assets/Scripts/Rotate.cs" Line="35" Column="10" />
+      <File FileName="Assets/GetTheNumber.cs" Line="4" Column="1" />
+      <File FileName="Assets/Movement.cs" Line="1" Column="1" />
+      <File FileName="Assets/PanelMovement.cs" Line="29" Column="82" />
+      <File FileName="Assets/Player.cs" Line="11" Column="26" />
+      <File FileName="Assets/State.cs" Line="10" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

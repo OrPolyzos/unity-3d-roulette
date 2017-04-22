@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 	public Button Jugar;
 	public Sprite JugarNormal;
 	public Sprite JugarLit;
+	public Button Cancel;
 
     public Button[] PlayerButtons = new Button[8];
     public GameObject[] Chips = new GameObject[13];
@@ -50,6 +51,9 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
             }
         }
         KeepPlayerCreditsUpdated();
+
+		Jugar.enabled = false;
+		Cancel.enabled = false;
     }
 	
 	// Update is called once per frame
@@ -147,6 +151,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 			Sphere.GetComponent<Rigidbody> ().isKinematic = false;
             Roulette.GetComponent<Rotate>().enabled = true;
             Camera.GetComponent<Movement>().enabled = true;
+			Cancel.enabled = false;
 		}
 	}
 
@@ -207,6 +212,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
                 PlayerButtons[i].transform.GetChild(0).GetComponent<Text>().text = PlayerCredits[i].ToString();
             }
         }
+		setJugarState ();
     }
 
 //	IEnumerator delayforMessage(){
@@ -238,6 +244,8 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 				}
 			}
 		}
+		EmptyAllPlayerBets ();
+		setJugarState ();
 	}
 
     public void KeepPlayerBetsUpdated()
@@ -261,6 +269,36 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
         }
     }
 
+	public void EmptyAllPlayerBets(){
+		Debug.Log ("Clear Bets");
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 13; j++) {
+				PlayerBets [i, j] = 0;
+				TotalBets [j] = 0;
+				Chips[j].transform.GetChild(1).GetComponent<Text>().text = "";
+			}
+		}
+	}
+
+	public void setJugarState(){
+		bool isBetAvailable = false;
+		for (int i = 0; i < 8; i++)
+		{
+			for (int j = 0; j < 13; j++) {
+				if (PlayerBets [i, j] > 0) {
+					isBetAvailable = true;
+					break;
+				}
+			}
+		}
+		if (!isBetAvailable) {
+			Jugar.enabled = false;
+			Cancel.enabled = false;
+		} else {
+			Jugar.enabled = true;
+			Cancel.enabled = true;
+		}
+	}
     public void KeepTotalBetsUpdated()
     {
         for (int j = 0; j < 13; j++)
@@ -289,6 +327,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
     }
     public void CancelClick()
     {
+		Debug.Log("inside Cancel");
         for (int i = 0; i < 8; i++)
         {
             if (PlayerNames[i] == ActivePlayer)
