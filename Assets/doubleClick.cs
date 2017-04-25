@@ -7,6 +7,9 @@ public class doubleClick : MonoBehaviour, IPointerClickHandler {
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
+		if (EventSystem.current.currentSelectedGameObject == null) {
+			return;
+		}
 		if (EventSystem.current.currentSelectedGameObject.name == "Cancel")
 		{
 			Debug.Log("first block");
