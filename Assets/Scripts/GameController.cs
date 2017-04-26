@@ -33,6 +33,8 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 
 	public bool isJugarClicked = false;
     public bool playerButtonClicked = false;
+    public bool AwardsAreGiven = false;
+
     public string ActivePlayer;
 	
     // Use this for initialization
@@ -52,8 +54,8 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
         }
         KeepPlayerCreditsUpdated();
 
-		Jugar.enabled = false;
-		Cancel.enabled = false;
+		Jugar.interactable = false;
+		Cancel.interactable = false;
     }
 	
 	// Update is called once per frame
@@ -151,7 +153,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 			Sphere.GetComponent<Rigidbody> ().isKinematic = false;
             Roulette.GetComponent<Rotate>().enabled = true;
             Camera.GetComponent<Movement>().enabled = true;
-			Cancel.enabled = false;
+			Cancel.interactable = false;
 		}
 	}
 
@@ -228,22 +230,32 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 			 WinningNumber = int.Parse (Sphere.GetComponent<GetTheNumber> ().WinningNumber);
 		}
 		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 13; j++) {
-				if (PlayerBets [i, j] > 0 && j==WinningNumber) {
-					yield return new WaitForSeconds (2);
-					Debug.Log ("Winning Player is" + PlayerNames[i] + "and Number of Bets" + PlayerBets [i, j]);
-					this.GetComponent<State>().GameState = "AwardInformation";
-					this.GetComponent<State> ().WinningPlayerName = PlayerNames [i];
-					for (int k = 1; k <= PlayerBets [i, j]; k++) {
-						this.GetComponent<State> ().WinningAmount = (k * 5).ToString();
-                        PlayerCredits[i] = PlayerCredits[i] + 12;
-                        KeepPlayerCreditsUpdated();
-                        yield return new WaitForSeconds (0.5f);
-					}
+            for (int j = 0; j < 13; j++)
+            {
+                if (PlayerBets[i, j] > 0 && j == WinningNumber)
+                {
+                    yield return new WaitForSeconds(2);
+                    Debug.Log("Winning Player is" + PlayerNames[i] + "and Number of Bets" + PlayerBets[i, j]);
+                    this.GetComponent<State>().GameState = "AwardInformation";
+                    this.GetComponent<State>().WinningPlayerName = PlayerNames[i];
+                    for (int k = 1; k <= PlayerBets[i, j]; k++)
+                    {
+                        this.GetComponent<State>().WinningAmount = (k * 5).ToString();
+                        for (int c = 0; c < 12; c++)
+                        {
+                            AwardsAreGiven = true;
+                            PlayerCredits[i] = PlayerCredits[i] + 1;
+                            KeepPlayerCreditsUpdated();
+                            yield return new WaitForSeconds(0.1f);
+                        }
+                        yield return new WaitForSeconds(0.1f);
+                    }
 
-				}
-			}
-		}
+                }
+            }
+            MessagePanel.GetComponentInChildren<Text>().color = Color.black;
+
+        }
 		EmptyAllPlayerBets ();
 		setJugarState ();
 	}
@@ -292,11 +304,11 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 			}
 		}
 		if (!isBetAvailable) {
-			Jugar.enabled = false;
-			Cancel.enabled = false;
+			Jugar.interactable = false;
+			Cancel.interactable = false;
 		} else {
-			Jugar.enabled = true;
-			Cancel.enabled = true;
+			Jugar.interactable = true;
+			Cancel.interactable = true;
 		}
 	}
     public void KeepTotalBetsUpdated()
