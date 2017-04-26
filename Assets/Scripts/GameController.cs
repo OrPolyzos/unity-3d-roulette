@@ -34,9 +34,12 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 	public bool isJugarClicked = false;
     public bool playerButtonClicked = false;
     public string ActivePlayer;
+
+	private Stack undoBets;
 	
     // Use this for initialization
 	void Start () {
+		undoBets = new Stack();
         Players = GameObject.Find("Players&Jugar");
 
         for (int i = 0; i < 8; i++)
@@ -325,29 +328,63 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 
         }
     }
+
+	public void CancelDblClick()
+	{
+		Debug.Log("inside Cancel Double Click");
+		for (int i = 0; i < 8; i++)
+		{
+			//int diff = PlayerOriginalCredits[i] - PlayerCredits[i];
+				PlayerCredits[i] = PlayerOriginalCredits[i];
+				for (int j = 0; j < 13; j++)
+				{
+					int diff = PlayerBets[i, j];
+					PlayerBets[i, j] = 0;
+					if (TotalBets[j] != 0)
+					{
+						TotalBets[j] = TotalBets[j] - diff;
+					}
+
+				}
+		}
+		KeepTotalBetsUpdated();
+		KeepPlayerCreditsUpdated();
+		setJugarState ();
+	}
+
+
     public void CancelClick()
     {
-		Debug.Log("inside Cancel");
-        for (int i = 0; i < 8; i++)
-        {
-            if (PlayerNames[i] == ActivePlayer)
-            {
-                //int diff = PlayerOriginalCredits[i] - PlayerCredits[i];
-                PlayerCredits[i] = PlayerOriginalCredits[i];
-                for (int j = 0; j < 13; j++)
-                {
-                    int diff = PlayerBets[i, j];
-                    PlayerBets[i, j] = 0;
-                    if (TotalBets[j] != 0)
-                    {
-                        TotalBets[j] = TotalBets[j] - diff;
-                    }
-
-                }
-            }
-        }
+		if (undoBets.Count == 0) {
+			return;
+		}
+		string ChipnPlayerinfo = undoBets.Pop().ToString();
+//        for (int i = 0; i < 8; i++)
+//        {
+//            if (PlayerNames[i] == ActivePlayer)
+//            {
+//                //int diff = PlayerOriginalCredits[i] - PlayerCredits[i];
+//                PlayerCredits[i] = PlayerOriginalCredits[i];
+//                for (int j = 0; j < 13; j++)
+//                {
+//                    int diff = PlayerBets[i, j];
+//                    PlayerBets[i, j] = 0;
+//                    if (TotalBets[j] != 0)
+//                    {
+//                        TotalBets[j] = TotalBets[j] - diff;
+//                    }
+//
+//                }
+//            }
+//        }
+		int playernum = int.Parse(ChipnPlayerinfo.Split(',')[0]);
+		int betnum = int.Parse(ChipnPlayerinfo.Split(',')[1]);
+		Debug.Log ("player num: " + playernum + "  Bet number: " + betnum);
+		PlayerCredits [playernum] += 1;
+		TotalBets [betnum] -= 1;
         KeepTotalBetsUpdated();
         KeepPlayerCreditsUpdated();
+		setJugarState ();
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -376,6 +413,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 
     public void ChipClick()
     {
+		string ChipnPlayerInfo;
         if (ActivePlayer != String.Empty)
         {
             for (int i = 0; i < 8; i++)
@@ -389,6 +427,8 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
                         {
                             if (PlayerCredits[i] > 0 && TotalBets[j] < 40)
                             {
+								ChipnPlayerInfo = i.ToString () + "," + j.ToString ();
+								undoBets.Push (ChipnPlayerInfo);
                                 PlayerCredits[i]--;
                                 PlayerBets[i, j]++;
                                 TotalBets[j]++;
