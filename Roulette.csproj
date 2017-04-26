@@ -81,6 +81,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\BallMov.cs" />
     <Compile Include="Assets\GetTheNumber.cs" />
     <Compile Include="Assets\Movement.cs" />
     <Compile Include="Assets\PanelMovement.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\Rotate.cs" />
     <Compile Include="Assets\State.cs" />
+    <Compile Include="Assets\doubleClick.cs" />
     <Compile Include="Assets\iTweenEditor\Examples\StartAndStopTween.cs" />
     <Compile Include="Assets\iTweenEditor\Helper Classes\EventParamMappings.cs" />
     <Compile Include="Assets\iTweenEditor\Helper Classes\Vector3OrTransform.cs" />

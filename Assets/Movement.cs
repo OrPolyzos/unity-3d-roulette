@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Movement : MonoBehaviour {
 
 	// Use this for initialization
@@ -10,7 +11,13 @@ public class Movement : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
-	}
+	void Update () {   
+    }
+
+
+    public void MoveCameraUp()
+    {
+        iTween.MoveTo(gameObject, iTween.Hash("path", iTweenPath.GetPath("CameraMovRev"), "time", 20));
+
+    }
 }

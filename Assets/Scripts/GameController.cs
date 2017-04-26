@@ -41,7 +41,6 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 	void Start () {
 		undoBets = new Stack();
         Players = GameObject.Find("Players&Jugar");
-
         for (int i = 0; i < 8; i++)
         {
             PlayerCredits[i] = 0;
@@ -54,7 +53,6 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
             }
         }
         KeepPlayerCreditsUpdated();
-
 		Jugar.enabled = false;
 		Cancel.enabled = false;
     }
@@ -224,32 +222,106 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 
 	public IEnumerator displayAwardInformation()
 	{
+        for (int i = 0; i < 8; i++)
+        {
+            PlayerButtons[i].image.overrideSprite = PlayerSprites[i];
+        }
+
 		int WinningNumber = 0;
 		if (Sphere.GetComponent<GetTheNumber> ().WinningNumber.Contains ("Sensor N0")) {
 			WinningNumber = 0;
 		} else {
-			 WinningNumber = int.Parse (Sphere.GetComponent<GetTheNumber> ().WinningNumber);
-		}
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 13; j++) {
-				if (PlayerBets [i, j] > 0 && j==WinningNumber) {
-					yield return new WaitForSeconds (2);
-					Debug.Log ("Winning Player is" + PlayerNames[i] + "and Number of Bets" + PlayerBets [i, j]);
-					this.GetComponent<State>().GameState = "AwardInformation";
-					this.GetComponent<State> ().WinningPlayerName = PlayerNames [i];
-					for (int k = 1; k <= PlayerBets [i, j]; k++) {
-						this.GetComponent<State> ().WinningAmount = (k * 5).ToString();
-                        PlayerCredits[i] = PlayerCredits[i] + 12;
-                        KeepPlayerCreditsUpdated();
-                        yield return new WaitForSeconds (0.5f);
-					}
+            WinningNumber = int.Parse(Sphere.GetComponent<GetTheNumber>().WinningNumber);
 
-				}
-			}
 		}
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 13; j++)
+            {
+                if (PlayerBets[i, j] > 0 && j == WinningNumber)
+                {
+                    yield return new WaitForSeconds(2);
+                    Debug.Log("Winning Player is" + PlayerNames[i] + "and Number of Bets" + PlayerBets[i, j]);
+                    this.GetComponent<State>().GameState = "AwardInformation";
+                    this.GetComponent<State>().WinningPlayerName = PlayerNames[i];
+                    PlayerButtons[i].image.overrideSprite = PlayerSpritesLit[i];
+                    for (int k = 1; k <= PlayerBets[i, j]; k++)
+                    {
+                        if (k == PlayerBets[i, j])
+                        {
+                            MessagePanel.GetComponentInChildren<Text>().fontSize = 85;
+                            MessagePanel.GetComponentInChildren<Text>().color = Color.red;
+                            this.GetComponent<State>().WinningAmount = (k * 5).ToString();
+                            this.GetComponent<AudioSource>().Play();
+                            yield return new WaitForSeconds(0.75f);
+                        }
+                        else
+                        {
+                            MessagePanel.GetComponentInChildren<Text>().fontSize = 75;
+                            MessagePanel.GetComponentInChildren<Text>().color = Color.black;
+                            this.GetComponent<State>().WinningAmount = (k * 5).ToString();
+                            this.GetComponent<AudioSource>().Play();
+                            yield return new WaitForSeconds(0.1f);
+                        }
+                    }
+                    for (int k = 1; k <= PlayerBets[i, j]; k++)
+                    {
+                        if (k == PlayerBets[i, j])
+                        {
+                            for (int CreditAddition = 0; CreditAddition < 12; CreditAddition++)
+                            {
+                                if (CreditAddition == 11)
+                                {
+                                    PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 50;
+                                    PlayerButtons[i].GetComponentInChildren<Text>().color = Color.red;
+                                    PlayerCredits[i] = PlayerCredits[i] + 1;
+                                    this.GetComponent<AudioSource>().Play();
+                                    KeepPlayerCreditsUpdated();
+                                    yield return new WaitForSeconds(0.75f);
+                                }
+                                else
+                                {
+                                    PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
+                                    PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
+                                    PlayerCredits[i] = PlayerCredits[i] + 1;
+                                    this.GetComponent<AudioSource>().Play();
+                                    KeepPlayerCreditsUpdated();
+                                    yield return new WaitForSeconds(0.05f);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (int CreditAddition = 0; CreditAddition < 12; CreditAddition++)
+                            {
+                                PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
+                                PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
+                                PlayerCredits[i] = PlayerCredits[i] + 1;
+                                this.GetComponent<AudioSource>().Play();
+                                KeepPlayerCreditsUpdated();
+                                yield return new WaitForSeconds(0.05f);
+                            }
+                        }
+                    }
+                    MessagePanel.GetComponentInChildren<Text>().fontSize = 75;
+                    MessagePanel.GetComponentInChildren<Text>().color = Color.black;
+                    PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
+                    PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
+                    yield return new WaitForSeconds(0.05f);
+                }
+            }
+            PlayerButtons[i].image.overrideSprite = PlayerSprites[i];
+        }
 		EmptyAllPlayerBets ();
 		setJugarState ();
-	}
+        Camera.GetComponent<Movement>().MoveCameraUp();
+        Sphere.GetComponent<Rigidbody>().isKinematic = true;
+        Sphere.GetComponent<BallMov>().MoveBallUp();
+        this.GetComponent<State>().GameState = "Idle";
+        Sphere.GetComponent<iTweenPath>().enabled = false;
+        isJugarClicked = false;
+        Jugar.image.overrideSprite = JugarNormal;
+    }
 
     public void KeepPlayerBetsUpdated()
     {
@@ -284,7 +356,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 	}
 
 	public void setJugarState(){
-		bool isBetAvailable = false;
+        bool isBetAvailable = false;
 		for (int i = 0; i < 8; i++)
 		{
 			for (int j = 0; j < 13; j++) {
@@ -340,11 +412,10 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 				{
 					int diff = PlayerBets[i, j];
 					PlayerBets[i, j] = 0;
-					if (TotalBets[j] != 0)
+					if (TotalBets[j] > 0)
 					{
 						TotalBets[j] = TotalBets[j] - diff;
 					}
-
 				}
 		}
 		KeepTotalBetsUpdated();
@@ -378,8 +449,9 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 //            }
 //        }
 		int playernum = int.Parse(ChipnPlayerinfo.Split(',')[0]);
-		int betnum = int.Parse(ChipnPlayerinfo.Split(',')[1]);
-		Debug.Log ("player num: " + playernum + "  Bet number: " + betnum);
+        int betnum = int.Parse(ChipnPlayerinfo.Split(',')[1]);
+        Debug.Log("Player Num: " + playernum + "on  Bet Num: " + betnum);
+        PlayerBets[playernum, betnum] -= 1;
 		PlayerCredits [playernum] += 1;
 		TotalBets [betnum] -= 1;
         KeepTotalBetsUpdated();
@@ -397,18 +469,6 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("here");
-        Debug.Log(EventSystem.current.currentSelectedGameObject.name);
-
-        if (EventSystem.current.currentSelectedGameObject.name == "Cancel")
-        {
-            Debug.Log("first block");
-            int tap = eventData.clickCount;
-            if (tap == 2)
-            {
-                Debug.Log("2 tap block");
-            }
-        }
     }
 
     public void ChipClick()

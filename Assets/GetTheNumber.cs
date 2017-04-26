@@ -85,8 +85,5 @@ public class GetTheNumber : MonoBehaviour {
                     break;
                 }
         }
-            
-        if (sensor.gameObject.name.Equals("Sensor N0"))
-        WinningNumber = sensor.gameObject.name;
     }
 }
