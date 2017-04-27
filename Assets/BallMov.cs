@@ -16,7 +16,7 @@ public class BallMov : MonoBehaviour {
 
     public void MoveBallUp()
     {
-        iTween.MoveTo(gameObject, iTween.Hash("path", iTweenPath.GetPath("BallMovRev"), "time", 10));
+        iTween.MoveTo(gameObject, iTween.Hash("path", iTweenPath.GetPath("BallMovRev"), "time", 5));
 
     }
 }

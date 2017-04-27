@@ -22,7 +22,6 @@ public class BallForce : MonoBehaviour {
         {
             Icollided = true;
             this.GetComponent<Rigidbody>().AddForce(0, 0, force, ForceMode.VelocityChange);
-
         }
 
     }
