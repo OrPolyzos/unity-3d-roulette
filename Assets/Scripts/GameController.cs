@@ -115,89 +115,81 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
             KeepPlayerCreditsUpdated();
             MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Added 10 credits to Player 8!";
         }
-        if (Input.GetMouseButton(0))
-        {
-            if (EventSystem.current.currentSelectedGameObject != null)
-            {
-                switch (EventSystem.current.currentSelectedGameObject.name)
-                {
-                    case "Player 1":
-                    case "Player 2":
-                    case "Player 3":
-                    case "Player 4":
-                    case "Player 5":
-                    case "Player 6":
-                    case "Player 7":
-                    case "Player 8":
-                        KeepPlayerBetsUpdated();
-                        break;
-                }
-            }
-        }
-        else
-        {
-            KeepTotalBetsUpdated();
-        }
-
     }
 
-	public void startGame()
-	{
-        GetComponent<State>().GameState = "GameStarted";
-		if (isJugarClicked) {
-			Jugar.image.overrideSprite = JugarNormal;
-		} else {
-			isJugarClicked = true;
-			Jugar.image.overrideSprite = JugarLit;
-			Sphere.GetComponent<Rigidbody> ().isKinematic = false;
-            Roulette.GetComponent<Rotate>().enabled = true;
-            Camera.GetComponent<Movement>().enabled = true;
-			Cancel.enabled = false;
-		}
-	}
+    public void GetEverythingReadyToPlay()
+    {
+        Camera.GetComponent<Movement>().MoveCameraUp();
+        Sphere.GetComponent<Rigidbody>().isKinematic = true;
+        Sphere.GetComponent<BallMov>().MoveBallUp();
+        Sphere.GetComponent<BallForce>().Icollided = false;
+        this.GetComponent<State>().GameState = "Idle";
 
+        isJugarClicked = false;
+        Jugar.image.overrideSprite = JugarNormal;
+    }
+	public void startGame()
+	{if (GetComponent<State>().GameState == "Idle")
+        {
+            GetComponent<State>().GameState = "GameStarted";
+            GetComponent<State>().GameState = "GameStarted";
+            isJugarClicked = true;
+            Jugar.image.overrideSprite = JugarLit;
+            Sphere.GetComponent<Rigidbody>().isKinematic = false;
+            Roulette.GetComponent<Rotate>().SetSpeedAgain();
+            Camera.GetComponent<Movement>().MoveCameraDown();
+            Cancel.enabled = false;
+        }
+    }
+
+    public void PlayerHoldClick(GameObject ClickedObject)
+    {
+        if (ClickedObject != null)
+        {
+            switch (ClickedObject.name)
+            {
+                case "Player 1":
+                    PlayerButtons[0].image.overrideSprite = PlayerSpritesLit[0];
+                    ClearRestButtons(ClickedObject.GetComponent<Button>());
+                    break;
+                case "Player 2":
+                    PlayerButtons[1].image.overrideSprite = PlayerSpritesLit[1];
+                    ClearRestButtons(ClickedObject.GetComponent<Button>());
+                    break;
+                case "Player 3":
+                    PlayerButtons[2].image.overrideSprite = PlayerSpritesLit[2];
+                    ClearRestButtons(ClickedObject.GetComponent<Button>());
+                    break;
+                case "Player 4":
+                    PlayerButtons[3].image.overrideSprite = PlayerSpritesLit[3];
+                    ClearRestButtons(ClickedObject.GetComponent<Button>());
+                    break;
+                case "Player 5":
+                    PlayerButtons[4].image.overrideSprite = PlayerSpritesLit[4];
+                    ClearRestButtons(ClickedObject.GetComponent<Button>());
+                    break;
+                case "Player 6":
+                    PlayerButtons[5].image.overrideSprite = PlayerSpritesLit[5];
+                    ClearRestButtons(ClickedObject.GetComponent<Button>());
+                    break;
+                case "Player 7":
+                    PlayerButtons[6].image.overrideSprite = PlayerSpritesLit[6];
+                    ClearRestButtons(ClickedObject.GetComponent<Button>());
+                    break;
+                case "Player 8":
+                    PlayerButtons[7].image.overrideSprite = PlayerSpritesLit[7];
+                    ClearRestButtons(ClickedObject.GetComponent<Button>());
+                    break;
+            }
+            ActivePlayer = ClickedObject.name;
+            KeepPlayerBetsUpdated();
+            MessagePanel.transform.GetChild(0).GetComponent<Text>().text = ActivePlayer;
+            KeepPlayerCreditsUpdated();
+        }
+    }
     public void PlayerClick()
     {
-        switch (EventSystem.current.currentSelectedGameObject.name)
-        {
-            case "Player 1":
-                PlayerButtons[0].image.overrideSprite = PlayerSpritesLit[0];
-                ClearRestButtons(EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
-                break;
-            case "Player 2":
-                PlayerButtons[1].image.overrideSprite = PlayerSpritesLit[1];
-                ClearRestButtons(EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
-                KeepPlayerBetsUpdated();
-                break;
-            case "Player 3":
-                PlayerButtons[2].image.overrideSprite = PlayerSpritesLit[2];
-                ClearRestButtons(EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
-                break;
-            case "Player 4":
-                PlayerButtons[3].image.overrideSprite = PlayerSpritesLit[3];
-                ClearRestButtons(EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
-                break;
-            case "Player 5":
-                PlayerButtons[4].image.overrideSprite = PlayerSpritesLit[4];
-                ClearRestButtons(EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
-                break;
-            case "Player 6":
-                PlayerButtons[5].image.overrideSprite = PlayerSpritesLit[5];
-                ClearRestButtons(EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
-                break;
-            case "Player 7":
-                PlayerButtons[6].image.overrideSprite = PlayerSpritesLit[6];
-                ClearRestButtons(EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
-                break;
-            case "Player 8":
-                PlayerButtons[7].image.overrideSprite = PlayerSpritesLit[7];
-                ClearRestButtons(EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
-                break;
-        }
-        ActivePlayer = EventSystem.current.currentSelectedGameObject.name;
-        MessagePanel.transform.GetChild(0).GetComponent<Text>().text = ActivePlayer;
-        KeepPlayerCreditsUpdated();
-       //KeepPlayerBetsUpdated();
+        KeepTotalBetsUpdated();
     }
 
     public void KeepPlayerCreditsUpdated()
@@ -226,21 +218,15 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
         {
             PlayerButtons[i].image.overrideSprite = PlayerSprites[i];
         }
-
-		int WinningNumber = 0;
-		if (Sphere.GetComponent<GetTheNumber> ().WinningNumber.Contains ("Sensor N0")) {
-			WinningNumber = 0;
-		} else {
-            WinningNumber = int.Parse(Sphere.GetComponent<GetTheNumber>().WinningNumber);
-
-		}
+        yield return new WaitForSeconds(2);
+        int WinningNumber = 0;
+        WinningNumber = int.Parse(Sphere.GetComponent<GetTheNumber>().WinningNumber);
         for (int i = 0; i < 8; i++)
         {
             for (int j = 0; j < 13; j++)
             {
                 if (PlayerBets[i, j] > 0 && j == WinningNumber)
                 {
-                    yield return new WaitForSeconds(2);
                     Debug.Log("Winning Player is" + PlayerNames[i] + "and Number of Bets" + PlayerBets[i, j]);
                     this.GetComponent<State>().GameState = "AwardInformation";
                     this.GetComponent<State>().WinningPlayerName = PlayerNames[i];
@@ -250,15 +236,17 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
                         if (k == PlayerBets[i, j])
                         {
                             MessagePanel.GetComponentInChildren<Text>().fontSize = 85;
-                            MessagePanel.GetComponentInChildren<Text>().color = Color.red;
+                            MessagePanel.GetComponentInChildren<Text>().color = Color.white;
+                            MessagePanel.GetComponentInChildren<Outline>().enabled = true;
                             this.GetComponent<State>().WinningAmount = (k * 5).ToString();
                             this.GetComponent<AudioSource>().Play();
-                            yield return new WaitForSeconds(0.75f);
+                            yield return new WaitForSeconds(0.5f);
                         }
                         else
                         {
                             MessagePanel.GetComponentInChildren<Text>().fontSize = 75;
                             MessagePanel.GetComponentInChildren<Text>().color = Color.black;
+                            MessagePanel.GetComponentInChildren<Outline>().enabled = false;
                             this.GetComponent<State>().WinningAmount = (k * 5).ToString();
                             this.GetComponent<AudioSource>().Play();
                             yield return new WaitForSeconds(0.1f);
@@ -273,16 +261,18 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
                                 if (CreditAddition == 11)
                                 {
                                     PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 50;
-                                    PlayerButtons[i].GetComponentInChildren<Text>().color = Color.red;
+                                    PlayerButtons[i].GetComponentInChildren<Text>().color = Color.white;
+                                    PlayerButtons[i].GetComponentInChildren<Outline>().enabled = true;
                                     PlayerCredits[i] = PlayerCredits[i] + 1;
                                     this.GetComponent<AudioSource>().Play();
                                     KeepPlayerCreditsUpdated();
-                                    yield return new WaitForSeconds(0.75f);
+                                    yield return new WaitForSeconds(0.5f);
                                 }
                                 else
                                 {
                                     PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
                                     PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
+                                    PlayerButtons[i].GetComponentInChildren<Outline>().enabled = false;
                                     PlayerCredits[i] = PlayerCredits[i] + 1;
                                     this.GetComponent<AudioSource>().Play();
                                     KeepPlayerCreditsUpdated();
@@ -296,6 +286,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
                             {
                                 PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
                                 PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
+                                PlayerButtons[i].GetComponentInChildren<Outline>().enabled = false;
                                 PlayerCredits[i] = PlayerCredits[i] + 1;
                                 this.GetComponent<AudioSource>().Play();
                                 KeepPlayerCreditsUpdated();
@@ -305,22 +296,19 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
                     }
                     MessagePanel.GetComponentInChildren<Text>().fontSize = 75;
                     MessagePanel.GetComponentInChildren<Text>().color = Color.black;
+                    MessagePanel.GetComponentInChildren<Outline>().enabled = false;
                     PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
                     PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
-                    yield return new WaitForSeconds(0.05f);
+                    PlayerButtons[i].GetComponentInChildren<Outline>().enabled = false;
                 }
             }
             PlayerButtons[i].image.overrideSprite = PlayerSprites[i];
+            yield return new WaitForSeconds(0.25f);
         }
 		EmptyAllPlayerBets ();
-		setJugarState ();
-        Camera.GetComponent<Movement>().MoveCameraUp();
-        Sphere.GetComponent<Rigidbody>().isKinematic = true;
-        Sphere.GetComponent<BallMov>().MoveBallUp();
-        this.GetComponent<State>().GameState = "Idle";
-        Sphere.GetComponent<iTweenPath>().enabled = false;
-        isJugarClicked = false;
-        Jugar.image.overrideSprite = JugarNormal;
+        setJugarState();
+        GetEverythingReadyToPlay();
+
     }
 
     public void KeepPlayerBetsUpdated()
@@ -414,6 +402,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
             if (PlayerNames[playernum] == ActivePlayer)
             {
                 PlayerCredits[playernum] += 1;
+                PlayerBets[playernum, betnum] -= 1;
                 TotalBets[betnum] -= 1;
             }
             else
@@ -447,6 +436,7 @@ public class GameController : MonoBehaviour, IPointerClickHandler, IPointerDownH
             if (PlayerNames[playernum] == ActivePlayer)
             {
                 PlayerCredits[playernum] += 1;
+                PlayerBets[playernum,betnum] -= 1;
                 TotalBets[betnum] -= 1;
                 break;
             }

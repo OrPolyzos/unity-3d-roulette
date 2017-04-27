@@ -9,8 +9,7 @@ public class Rotate : MonoBehaviour {
     public GameObject EventSystem;
 	// Use this for initialization
 	void Start () {
-        Speed = Random.Range(200f,250f);
-        subt = 0.25f;
+
     }
 	
 	// Update is called once per frame
@@ -29,6 +28,12 @@ public class Rotate : MonoBehaviour {
         }
     }
     
+    public void SetSpeedAgain()
+    {
+        Speed = Random.Range(200f, 250f);
+        subt = 0.25f;
+    }
+
     void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.name.Equals("Sphere"))

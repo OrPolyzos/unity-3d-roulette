@@ -86,6 +86,7 @@
     <Compile Include="Assets\Movement.cs" />
     <Compile Include="Assets\PanelMovement.cs" />
     <Compile Include="Assets\Player.cs" />
+    <Compile Include="Assets\PlayerClick.cs" />
     <Compile Include="Assets\Scripts\BallForce.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\Rotate.cs" />
