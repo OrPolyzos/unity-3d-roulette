@@ -8,7 +8,6 @@ public class PlayerClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public GameObject PlayerDetails;
     public void OnPointerDown(PointerEventData eventData)
     {
-
         if (EventSystem.current.currentSelectedGameObject == null)
         {
             return;

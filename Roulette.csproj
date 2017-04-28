@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\BallMov.cs" />
+    <Compile Include="Assets\ChipClick.cs" />
     <Compile Include="Assets\GetTheNumber.cs" />
     <Compile Include="Assets\Movement.cs" />
     <Compile Include="Assets\PanelMovement.cs" />

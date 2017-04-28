@@ -56,7 +56,12 @@ public class GameController : MonoBehaviour
 
     // Stacks to use for Cancel button functionality, they hold all the player bets
 	private Stack undoBets,tmpBets;
-	
+
+    // Audioclips
+    public AudioClip TickSound;
+    public AudioClip ChipSingleSound;
+
+    public bool ExecutingMultibet = false;
     // Use this for initialization
 	void Start () {
         // Initializing the undoBets stack
@@ -177,8 +182,7 @@ public class GameController : MonoBehaviour
         // Change active player to none 
         ActivePlayer = String.Empty;
 
-        // Empty the stacks
-        tmpBets.Clear();
+        // Empty the stack
         undoBets.Clear();
 
         // That 's it setting GameState back to "Idle"
@@ -350,6 +354,9 @@ public class GameController : MonoBehaviour
             Chips[WinningNumber].GetComponentsInChildren<Button>()[i].colors = cb;
         }
 
+        //Boolean to check if there is winner
+        bool ThereisWinner = false;
+
         // For each player
         for (int i = 0; i < 8; i++)
         {
@@ -359,8 +366,10 @@ public class GameController : MonoBehaviour
                 // Check if they did bet on the number and if the number won
                 if (PlayerBets[i, j] > 0 && j == WinningNumber)
                 {
+                    // Since we are in here, there is winner
+                    ThereisWinner = true;
                     //Debug.Log("Winning Player is" + PlayerNames[i] + "and Number of Bets" + PlayerBets[i, j]);
-                    
+
                     // Set the WinningPlayerName equal to the playername
                     this.GetComponent<State>().WinningPlayerName = PlayerNames[i];
                     // Change the player's sprit to the correspondent Lit sprite
@@ -378,6 +387,7 @@ public class GameController : MonoBehaviour
                             // Set the WinningAmmount as the iteration number * 5 (Pesos)
                             this.GetComponent<State>().WinningAmount = (k * 5).ToString();
                             // Play a tick sound
+                            this.GetComponent<AudioSource>().clip = TickSound;
                             this.GetComponent<AudioSource>().Play();
                             // Wait 0.5 seconds (a little more than normal)
                             yield return new WaitForSeconds(0.5f);
@@ -392,6 +402,7 @@ public class GameController : MonoBehaviour
                             // Set the WinningAmmount as the iteration number * 5 (Pesos)
                             this.GetComponent<State>().WinningAmount = (k * 5).ToString();
                             // Play a tick sound
+                            this.GetComponent<AudioSource>().clip = TickSound;
                             this.GetComponent<AudioSource>().Play();
                             // Wait 0.1 second
                             yield return new WaitForSeconds(0.1f);
@@ -416,6 +427,7 @@ public class GameController : MonoBehaviour
                                     // Increment the PlayerCredits by 1
                                     PlayerCredits[i] = PlayerCredits[i] + 1;
                                     // Play a tick sound
+                                    this.GetComponent<AudioSource>().clip = TickSound;
                                     this.GetComponent<AudioSource>().Play();
                                     // Show the increment to the user
                                     KeepPlayerCreditsUpdated();
@@ -432,6 +444,7 @@ public class GameController : MonoBehaviour
                                     // Increment the PlayerCredits by 1
                                     PlayerCredits[i] = PlayerCredits[i] + 1;
                                     // Play a tick sound
+                                    this.GetComponent<AudioSource>().clip = TickSound;
                                     this.GetComponent<AudioSource>().Play();
                                     // Show the increment to the user
                                     KeepPlayerCreditsUpdated();
@@ -453,6 +466,7 @@ public class GameController : MonoBehaviour
                                 // Increment PlayerCredits by 1
                                 PlayerCredits[i] = PlayerCredits[i] + 1;
                                 // Play a tick sound
+                                this.GetComponent<AudioSource>().clip = TickSound;
                                 this.GetComponent<AudioSource>().Play();
                                 // Show the increment to the user
                                 KeepPlayerCreditsUpdated();
@@ -475,6 +489,13 @@ public class GameController : MonoBehaviour
             PlayerButtons[i].image.overrideSprite = PlayerSprites[i];
             // Wait 0.25second for the next player
             yield return new WaitForSeconds(0.25f);
+        }
+
+        // If there is no winner
+        if (!ThereisWinner)
+        {
+            // Wait 2 seconds for the messagepanel to inform the user
+            yield return new WaitForSeconds(2);
         }
         // For the 2 children of the winning number chip (Text,Component)
         for (int i = 0; i < 2; i++)
@@ -719,6 +740,61 @@ public class GameController : MonoBehaviour
     }
 
 
+    public IEnumerator ChipHoldClick(GameObject ClickedChip)
+    {
+        ExecutingMultibet = false;
+        string ChipnPlayerInfo;
+        // If there is an active player
+        if (ActivePlayer != String.Empty)
+        {
+            // For each player
+            for (int i = 0; i < 8; i++)
+            {
+                // if the player is the active player
+                if (PlayerNames[i] == ActivePlayer)
+                {
+                    // For each number
+                    for (int j = 0; j < 13; j++)
+                    {
+                        // Check if the number is equal to the chip number
+                        if (ClickedChip.name == "Chip " + j + "")
+                        {
+                            // Checking for player to has credit and total bet on this number to be less than 40
+                            if (PlayerCredits[i] > 0 && TotalBets[j] < 40)
+                            {
+                                ExecutingMultibet = true;
+                                // Get player info and number info to ChipnPlayerInfo
+                                ChipnPlayerInfo = i.ToString() + "," + j.ToString();
+                                // push the element to the stack
+                                undoBets.Push(ChipnPlayerInfo);
+                                // Decrement the player's credits by 1
+                                PlayerCredits[i]--;
+                                // Increment the player's bets by 1
+                                PlayerBets[i, j]++;
+                                // Increment the number's total bets by 1
+                                TotalBets[j]++;
+                                // Show the player's credit changes to the user
+                                KeepPlayerCreditsUpdated();
+                                // Show the number's total bet changes to the user
+                                KeepTotalBetsUpdated();
+                                // Play Chip sound
+                                this.GetComponent<AudioSource>().clip = ChipSingleSound;
+                                this.GetComponent<AudioSource>().Play();
+                                yield return new WaitForSeconds(0.05f);
+                            }
+                            // else show information message
+                            else
+                            {
+                                MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Not enough credits!";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ExecutingMultibet = false;
+    }
+
     // Function to be called when a player clicks on a chip
     public void ChipClick()
     {
@@ -757,6 +833,9 @@ public class GameController : MonoBehaviour
                                 KeepPlayerCreditsUpdated();
                                 // Show the number's total bet changes to the user
                                 KeepTotalBetsUpdated();
+                                // Play Chip sound
+                                this.GetComponent<AudioSource>().clip = ChipSingleSound;
+                                this.GetComponent<AudioSource>().Play();
                             }
                             // else show information message
                             else
