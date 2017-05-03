@@ -6,6 +6,7 @@ public class BallForce : MonoBehaviour {
 
     public bool Icollided = false;
     public float force;
+    public AudioClip RollingBall;
 
 	// Use this for initialization
 	void Start () {
@@ -14,6 +15,10 @@ public class BallForce : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        //if (this.GetComponent<AudioSource>().pitch > 0.8f)
+        //{
+        //    this.GetComponent<AudioSource>().pitch = this.GetComponent<AudioSource>().pitch - 0.0005f;
+        //}
     }
 
     void OnCollisionEnter(Collision col)
@@ -22,7 +27,9 @@ public class BallForce : MonoBehaviour {
         {
             Icollided = true;
             this.GetComponent<Rigidbody>().AddForce(0, 0, force, ForceMode.VelocityChange);
+            //this.GetComponent<AudioSource>().Play();
         }
+
 
     }
 }

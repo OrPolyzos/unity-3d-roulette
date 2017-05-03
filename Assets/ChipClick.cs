@@ -37,7 +37,7 @@ public class ChipClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         ChipIsBeingClicked = false;
         if(TimeBeingHold < 1f)
         {
-            PlayerDetails.GetComponent<GameController>().ChipClick();
+            PlayerDetails.GetComponent<GameController>().ChipClick(gameObject.transform.parent.gameObject);
         }
         TimeBeingHold = 0;
     }

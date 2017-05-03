@@ -742,105 +742,112 @@ public class GameController : MonoBehaviour
 
     public IEnumerator ChipHoldClick(GameObject ClickedChip)
     {
-        ExecutingMultibet = false;
-        string ChipnPlayerInfo;
-        // If there is an active player
-        if (ActivePlayer != String.Empty)
+        if (this.GetComponent<State>().GameState == "Idle")
         {
-            // For each player
-            for (int i = 0; i < 8; i++)
+            ExecutingMultibet = false;
+            string ChipnPlayerInfo;
+            // If there is an active player
+            if (ActivePlayer != String.Empty)
             {
-                // if the player is the active player
-                if (PlayerNames[i] == ActivePlayer)
+                // For each player
+                for (int i = 0; i < 8; i++)
                 {
-                    // For each number
-                    for (int j = 0; j < 13; j++)
+                    // if the player is the active player
+                    if (PlayerNames[i] == ActivePlayer)
                     {
-                        // Check if the number is equal to the chip number
-                        if (ClickedChip.name == "Chip " + j + "")
+                        // For each number
+                        for (int j = 0; j < 13; j++)
                         {
-                            // Checking for player to has credit and total bet on this number to be less than 40
-                            if (PlayerCredits[i] > 0 && TotalBets[j] < 40)
+                            // Check if the number is equal to the chip number
+                            if (ClickedChip.name == "Chip " + j + "")
                             {
-                                ExecutingMultibet = true;
-                                // Get player info and number info to ChipnPlayerInfo
-                                ChipnPlayerInfo = i.ToString() + "," + j.ToString();
-                                // push the element to the stack
-                                undoBets.Push(ChipnPlayerInfo);
-                                // Decrement the player's credits by 1
-                                PlayerCredits[i]--;
-                                // Increment the player's bets by 1
-                                PlayerBets[i, j]++;
-                                // Increment the number's total bets by 1
-                                TotalBets[j]++;
-                                // Show the player's credit changes to the user
-                                KeepPlayerCreditsUpdated();
-                                // Show the number's total bet changes to the user
-                                KeepTotalBetsUpdated();
-                                // Play Chip sound
-                                this.GetComponent<AudioSource>().clip = ChipSingleSound;
-                                this.GetComponent<AudioSource>().Play();
-                                yield return new WaitForSeconds(0.05f);
-                            }
-                            // else show information message
-                            else
-                            {
-                                MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Not enough credits!";
+                                // Checking for player to has credit and total bet on this number to be less than 40
+                                if (PlayerCredits[i] > 0 && TotalBets[j] < 40)
+                                {
+                                    ExecutingMultibet = true;
+                                    // Get player info and number info to ChipnPlayerInfo
+                                    ChipnPlayerInfo = i.ToString() + "," + j.ToString();
+                                    // push the element to the stack
+                                    undoBets.Push(ChipnPlayerInfo);
+                                    // Decrement the player's credits by 1
+                                    PlayerCredits[i]--;
+                                    // Increment the player's bets by 1
+                                    PlayerBets[i, j]++;
+                                    // Increment the number's total bets by 1
+                                    TotalBets[j]++;
+                                    // Show the player's credit changes to the user
+                                    KeepPlayerCreditsUpdated();
+                                    // Show the number's total bet changes to the user
+                                    KeepTotalBetsUpdated();
+                                    // Play Chip sound
+                                    this.GetComponent<AudioSource>().clip = ChipSingleSound;
+                                    this.GetComponent<AudioSource>().Play();
+                                    yield return new WaitForSeconds(0.05f);
+                                }
+                                // else show information message
+                                else
+                                {
+                                    MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Not enough credits!";
+                                }
                             }
                         }
                     }
                 }
             }
+            ExecutingMultibet = false;
+
         }
-        ExecutingMultibet = false;
     }
 
     // Function to be called when a player clicks on a chip
-    public void ChipClick()
+    public void ChipClick(GameObject ClickedChip)
     {
-        string ChipnPlayerInfo;
-        // If there is an active player
-        if (ActivePlayer != String.Empty)
+        if (this.GetComponent<State>().GameState == "Idle")
         {
-            // For each player
-            for (int i = 0; i < 8; i++)
+            string ChipnPlayerInfo;
+            // If there is an active player
+            if (ActivePlayer != String.Empty)
             {
-                // if the player is the active player
-                if (PlayerNames[i] == ActivePlayer)
+                // For each player
+                for (int i = 0; i < 8; i++)
                 {
-                    // Get the Clicked chip gameobject
-                    GameObject ClickedChip = EventSystem.current.currentSelectedGameObject.transform.parent.gameObject;
-                    // For each number
-                    for (int j = 0; j < 13; j++)
+                    // if the player is the active player
+                    if (PlayerNames[i] == ActivePlayer)
                     {
-                        // Check if the number is equal to the chip number
-                        if (ClickedChip.name == "Chip " + j + "")
+                        // Get the Clicked chip gameobject
+                        //GameObject ClickedChip = EventSystem.current.currentSelectedGameObject.transform.parent.gameObject;
+                        // For each number
+                        for (int j = 0; j < 13; j++)
                         {
-                            // Checking for player to has credit and total bet on this number to be less than 40
-                            if (PlayerCredits[i] > 0 && TotalBets[j] < 40)
+                            // Check if the number is equal to the chip number
+                            if (ClickedChip.name == "Chip " + j + "")
                             {
-                                // Get player info and number info to ChipnPlayerInfo
-                                ChipnPlayerInfo = i.ToString() + "," + j.ToString();
-                                // push the element to the stack
-                                undoBets.Push(ChipnPlayerInfo);
-                                // Decrement the player's credits by 1
-                                PlayerCredits[i]--;
-                                // Increment the player's bets by 1
-                                PlayerBets[i, j]++;
-                                // Increment the number's total bets by 1
-                                TotalBets[j]++;
-                                // Show the player's credit changes to the user
-                                KeepPlayerCreditsUpdated();
-                                // Show the number's total bet changes to the user
-                                KeepTotalBetsUpdated();
-                                // Play Chip sound
-                                this.GetComponent<AudioSource>().clip = ChipSingleSound;
-                                this.GetComponent<AudioSource>().Play();
-                            }
-                            // else show information message
-                            else
-                            {
-                                MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Not enough credits!";
+                                // Checking for player to has credit and total bet on this number to be less than 40
+                                if (PlayerCredits[i] > 0 && TotalBets[j] < 40)
+                                {
+                                    // Get player info and number info to ChipnPlayerInfo
+                                    ChipnPlayerInfo = i.ToString() + "," + j.ToString();
+                                    // push the element to the stack
+                                    undoBets.Push(ChipnPlayerInfo);
+                                    // Decrement the player's credits by 1
+                                    PlayerCredits[i]--;
+                                    // Increment the player's bets by 1
+                                    PlayerBets[i, j]++;
+                                    // Increment the number's total bets by 1
+                                    TotalBets[j]++;
+                                    // Show the player's credit changes to the user
+                                    KeepPlayerCreditsUpdated();
+                                    // Show the number's total bet changes to the user
+                                    KeepTotalBetsUpdated();
+                                    // Play Chip sound
+                                    this.GetComponent<AudioSource>().clip = ChipSingleSound;
+                                    this.GetComponent<AudioSource>().Play();
+                                }
+                                // else show information message
+                                else
+                                {
+                                    MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Not enough credits!";
+                                }
                             }
                         }
                     }
