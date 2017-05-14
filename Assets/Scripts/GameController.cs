@@ -54,8 +54,8 @@ public class GameController : MonoBehaviour
     // Bool to check if the Jugar button is clicked;
     public bool isJugarClicked = false;
 
-    // Stacks to use for Cancel button functionality, they hold all the player bets
-	private Stack undoBets,tmpBets;
+    // Array of Stacks for each player to use for Cancel button functionality, they hold Chip Number & Bet Ammount
+    private Stack[] undoBets = new Stack[8];
 
     // Audioclips
     public AudioClip TickSound;
@@ -64,8 +64,12 @@ public class GameController : MonoBehaviour
     public bool ExecutingMultibet = false;
     // Use this for initialization
 	void Start () {
-        // Initializing the undoBets stack
-		undoBets = new Stack();
+        // Initializing the undoBets stacks for each player
+        for (int i = 0; i < 8; i++)
+        {
+            undoBets[i] = new Stack();
+        }
+        
         // Finding the players of the game
         Players = GameObject.Find("Players&Jugar");
         // For each one of the players
@@ -182,8 +186,12 @@ public class GameController : MonoBehaviour
         // Change active player to none 
         ActivePlayer = String.Empty;
 
-        // Empty the stack
-        undoBets.Clear();
+        // Empty the stacks
+        //undoBets.Clear();
+        for (int i = 0; i < 8; i++)
+        {
+            undoBets[i].Clear();
+        }
 
         // That 's it setting GameState back to "Idle"
         this.GetComponent<State>().GameState = "Idle";
@@ -676,27 +684,23 @@ public class GameController : MonoBehaviour
     // Function to be called when user double clicks cancel button (cancels all his bets)
     public void CancelDblClick()
     {
-        Debug.Log("inside Cancel Double Click for " + ActivePlayer);
-        tmpBets = new Stack();
-        while (undoBets.Count != 0)
+        Debug.Log("Inside Cancel Double Click for " + ActivePlayer);
+        for (int i = 0; i < 8; i++)
         {
-            string ChipnPlayerinfo = undoBets.Pop().ToString();
-            int playernum = int.Parse(ChipnPlayerinfo.Split(',')[0]);
-            int betnum = int.Parse(ChipnPlayerinfo.Split(',')[1]);
-            Debug.Log("player num: " + playernum + "  Bet number: " + betnum + " Player Name " + PlayerNames[playernum]);
-            if (PlayerNames[playernum] == ActivePlayer)
+            if (PlayerNames[i].Equals(ActivePlayer))
             {
-                PlayerCredits[playernum] += 1;
-                PlayerBets[playernum, betnum] -= 1;
-                TotalBets[betnum] -= 1;
-            }
-            else
-            {
-                tmpBets.Push(ChipnPlayerinfo);
+                for (int j = 0; j < 13; j++)
+                {
+                    if (PlayerBets[i,j] > 0)
+                    {
+                        PlayerCredits[i] += PlayerBets[i, j];
+                        TotalBets[j] -= PlayerBets[i, j];
+                        PlayerBets[i, j] = 0;
+                    }
+                }
+                undoBets[i].Clear();
             }
         }
-        if (tmpBets.Count > 0)
-            undoBets = tmpBets;
         KeepTotalBetsUpdated();
         KeepPlayerCreditsUpdated();
         setJugarState();
@@ -706,33 +710,24 @@ public class GameController : MonoBehaviour
 
     public void CancelClick()
     {
-        if (undoBets.Count == 0)
+        for (int i = 0; i < 8; i++)
         {
-            return;
-        }
-
-        tmpBets = new Stack();
-        while (undoBets.Count > 0)
-        {
-            string ChipnPlayerinfo = undoBets.Pop().ToString();
-            int playernum = int.Parse(ChipnPlayerinfo.Split(',')[0]);
-            int betnum = int.Parse(ChipnPlayerinfo.Split(',')[1]);
-            Debug.Log("player num: " + playernum + "  Bet number: " + betnum);
-            if (PlayerNames[playernum] == ActivePlayer)
+            if (PlayerNames[i].Equals(ActivePlayer))
             {
-                PlayerCredits[playernum] += 1;
-                PlayerBets[playernum,betnum] -= 1;
-                TotalBets[betnum] -= 1;
-                break;
+                if (undoBets[i].Count == 0)
+                {
+                    return;
+                }
+                else
+                {
+                    string ChipnAmmount = undoBets[i].Pop().ToString();
+                    int ChipNumber = Int32.Parse(ChipnAmmount.Split(',')[0]);
+                    int BetAmmount = Int32.Parse(ChipnAmmount.Split(',')[1]);
+                    PlayerCredits[i] += BetAmmount;
+                    PlayerBets[i, ChipNumber] -= BetAmmount;
+                    TotalBets[ChipNumber] -= BetAmmount;
+                }
             }
-            else
-            {
-                tmpBets.Push(ChipnPlayerinfo);
-            }
-        }
-        while (tmpBets.Count > 0)
-        {
-            undoBets.Push(tmpBets.Pop());
         }
         KeepTotalBetsUpdated();
         KeepPlayerCreditsUpdated();
@@ -745,7 +740,7 @@ public class GameController : MonoBehaviour
         if (this.GetComponent<State>().GameState == "Idle")
         {
             ExecutingMultibet = false;
-            string ChipnPlayerInfo;
+            string ChipnAmmount;
             // If there is an active player
             if (ActivePlayer != String.Empty)
             {
@@ -762,19 +757,42 @@ public class GameController : MonoBehaviour
                             if (ClickedChip.name == "Chip " + j + "")
                             {
                                 // Checking for player to has credit and total bet on this number to be less than 40
-                                if (PlayerCredits[i] > 0 && TotalBets[j] < 40)
+                                if (PlayerCredits[i] - 5 >= 0 && TotalBets[j] + 5 <= 40)
                                 {
                                     ExecutingMultibet = true;
-                                    // Get player info and number info to ChipnPlayerInfo
-                                    ChipnPlayerInfo = i.ToString() + "," + j.ToString();
-                                    // push the element to the stack
-                                    undoBets.Push(ChipnPlayerInfo);
+                                    // Get Chip Number and Bet Ammount Info and send it to ChipnAmmount 
+                                    ChipnAmmount = j.ToString() + "," + "5";
+                                    // push the element to the Player's stack
+                                    undoBets[i].Push(ChipnAmmount);
                                     // Decrement the player's credits by 1
-                                    PlayerCredits[i]--;
+                                    PlayerCredits[i] -= 5;
                                     // Increment the player's bets by 1
-                                    PlayerBets[i, j]++;
+                                    PlayerBets[i, j] += 5;
                                     // Increment the number's total bets by 1
-                                    TotalBets[j]++;
+                                    TotalBets[j] += 5;
+                                    // Show the player's credit changes to the user
+                                    KeepPlayerCreditsUpdated();
+                                    // Show the number's total bet changes to the user
+                                    KeepTotalBetsUpdated();
+                                    // Play Chip sound
+                                    this.GetComponent<AudioSource>().clip = ChipSingleSound;
+                                    this.GetComponent<AudioSource>().Play();
+                                    yield return new WaitForSeconds(0.15f);
+                                }
+                                // else show information message
+                                else if (PlayerCredits[i] > 0 && TotalBets[j] < 40)
+                                {
+                                    ExecutingMultibet = true;
+                                    // Get Chip Number and Bet Ammount Info and send it to ChipnAmmount 
+                                    ChipnAmmount = j.ToString() + "," + "1";
+                                    // push the element to the Player's stack
+                                    undoBets[i].Push(ChipnAmmount);
+                                    // Decrement the player's credits by 1
+                                    PlayerCredits[i] -= 1;
+                                    // Increment the player's bets by 1
+                                    PlayerBets[i, j] += 1;
+                                    // Increment the number's total bets by 1
+                                    TotalBets[j] += 1;
                                     // Show the player's credit changes to the user
                                     KeepPlayerCreditsUpdated();
                                     // Show the number's total bet changes to the user
@@ -784,10 +802,13 @@ public class GameController : MonoBehaviour
                                     this.GetComponent<AudioSource>().Play();
                                     yield return new WaitForSeconds(0.05f);
                                 }
-                                // else show information message
-                                else
+                                else if (PlayerCredits[i] == 0)
                                 {
                                     MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Not enough credits!";
+                                }
+                                else if (TotalBets[j] == 40)
+                                {
+                                    MessagePanel.transform.GetChild(0).GetComponent<Text>().text = "Cannot bet to this number!";
                                 }
                             }
                         }
@@ -804,7 +825,7 @@ public class GameController : MonoBehaviour
     {
         if (this.GetComponent<State>().GameState == "Idle")
         {
-            string ChipnPlayerInfo;
+            string ChipnAmmount;
             // If there is an active player
             if (ActivePlayer != String.Empty)
             {
@@ -825,10 +846,10 @@ public class GameController : MonoBehaviour
                                 // Checking for player to has credit and total bet on this number to be less than 40
                                 if (PlayerCredits[i] > 0 && TotalBets[j] < 40)
                                 {
-                                    // Get player info and number info to ChipnPlayerInfo
-                                    ChipnPlayerInfo = i.ToString() + "," + j.ToString();
-                                    // push the element to the stack
-                                    undoBets.Push(ChipnPlayerInfo);
+                                    // Get Chip Numbber and Bet Ammount info and send it to ChipnAmmount
+                                    ChipnAmmount = j.ToString() + "," + "1";
+                                    // push the element to the player's stack
+                                    undoBets[i].Push(ChipnAmmount);
                                     // Decrement the player's credits by 1
                                     PlayerCredits[i]--;
                                     // Increment the player's bets by 1
