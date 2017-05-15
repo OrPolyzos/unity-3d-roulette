@@ -12,7 +12,6 @@ public class PlayerClick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             return;
         }
-        Debug.Log("Down");
         PlayerDetails.GetComponent<GameController>().PlayerHoldClick(gameObject);
     }
 

@@ -12,7 +12,6 @@ public class doubleClick : MonoBehaviour, IPointerClickHandler {
 		}
 		if (EventSystem.current.currentSelectedGameObject.name == "Cancel")
 		{
-			Debug.Log("first block");
 			int tap = eventData.clickCount;
 			if (tap == 2)
 			{

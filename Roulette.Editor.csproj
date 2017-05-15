@@ -114,10 +114,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Roulette.Plugins.csproj">
-      <Project>{09009297-2255-8120-42E0-CA322F7BB9D3}</Project>
-      <Name>Roulette.Plugins</Name>
-    </ProjectReference>
     <ProjectReference Include="Roulette.csproj">
       <Project>{65F17377-815B-F575-5FF4-FC830050C711}</Project>
       <Name>Roulette</Name>
@@ -127,7 +123,6 @@
     <Compile Include="Assets\iTweenEditor\Editor\iTweenPathEditor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Plugins\Pixelplacement\iTween\ReadMe!\ReadMe!.txt" />
     <None Include="Assets\iTweenEditor\README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

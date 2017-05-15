@@ -38,16 +38,26 @@ public class PanelMovement : MonoBehaviour {
         }
 		else if (EventSystem.GetComponent<State>().GameState.Equals("AwardInformation"))
 		{
+            /*
             if (EventSystem.GetComponent<State>().WinningAmount != string.Empty)
             {
                 this.transform.GetChild(0).GetComponent<Text>().text =
-        EventSystem.GetComponent<State>().WinningPlayerName + " Won: " + EventSystem.GetComponent<State>().WinningAmount + " pesos";
+                EventSystem.GetComponent<State>().WinningPlayerName + " Won: " + EventSystem.GetComponent<State>().WinningAmount + " pesos";
             }
             else
             {
                 this.transform.GetChild(0).GetComponent<Text>().text = "No winners. Try again!";
             }
-
+            */
+            if (EventSystem.GetComponent<GameController>().ShowingAwards)
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text =
+                EventSystem.GetComponent<State>().WinningPlayerName + " Won: " + EventSystem.GetComponent<State>().WinningAmount + " pesos";
+            }
+            else
+            {
+                this.transform.GetChild(0).GetComponent<Text>().text = "No winners. Try again!";
+            }
         }
     }
 }

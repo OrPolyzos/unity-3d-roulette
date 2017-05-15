@@ -39,8 +39,6 @@ public class GameController : MonoBehaviour
     public Sprite[] PlayerSpritesLit = new Sprite[8];
     // Array to hold players' total credits
     private int[] PlayerCredits = new int[8];
-    // Array to hold players' total credits, when changes needed in runtime - 8 players
-    private int[] PlayerOriginalCredits = new int[8];
     // Array to hold the bets on each number of each player - 8 players / 13 numbers
     private int[,] PlayerBets = new int[8, 13];
     // Array to hold the total bets of all players on each number - 13 numbers
@@ -61,6 +59,8 @@ public class GameController : MonoBehaviour
     public AudioClip TickSound;
     public AudioClip ChipSingleSound;
 
+    public bool ThereisWinner = false;
+    public bool ShowingAwards = false;
     public bool ExecutingMultibet = false;
     // Use this for initialization
 	void Start () {
@@ -332,14 +332,29 @@ public class GameController : MonoBehaviour
         // Wait 2 seconds
         yield return new WaitForSeconds(2);
 
-        // Set GameState to "AwardInformation"
-        this.GetComponent<State>().GameState = "AwardInformation";
+        //Boolean to check if there is winner
+        ThereisWinner = false;
+        ShowingAwards = false;
 
         // Initialize WinningNumber, set it 0 for exceptions
         int WinningNumber = 0;
         // Get the actual winning number
         WinningNumber = int.Parse(Sphere.GetComponent<GetTheNumber>().WinningNumber);
-        
+
+        for (int i = 0; i < 8; i++)
+        {
+            // For each number
+            for (int j = 0; j < 13; j++)
+            {
+                // Check if they did bet on the number and if the number won
+                if (PlayerBets[i, j] > 0 && j == WinningNumber)
+                {
+                    // Since we are in here, there is winner
+                    ThereisWinner = true;
+                }
+            }
+        }
+
         // Change the text color of the winning number chip to white
         Chips[WinningNumber].GetComponentInChildren<Text>().color = Color.white;
         // Enable the outline component for the winning number chip
@@ -361,95 +376,117 @@ public class GameController : MonoBehaviour
             cb.disabledColor = cb.normalColor;
             Chips[WinningNumber].GetComponentsInChildren<Button>()[i].colors = cb;
         }
+        
+        // Set GameState to "AwardInformation"
+        this.GetComponent<State>().GameState = "AwardInformation";
 
-        //Boolean to check if there is winner
-        bool ThereisWinner = false;
-
-        // For each player
-        for (int i = 0; i < 8; i++)
+        if (ThereisWinner)
         {
-            // For each number
-            for (int j = 0; j < 13; j++)
+            // For each player
+            for (int i = 0; i < 8; i++)
             {
-                // Check if they did bet on the number and if the number won
-                if (PlayerBets[i, j] > 0 && j == WinningNumber)
+                // For each number
+                for (int j = 0; j < 13; j++)
                 {
-                    // Since we are in here, there is winner
-                    ThereisWinner = true;
-                    //Debug.Log("Winning Player is" + PlayerNames[i] + "and Number of Bets" + PlayerBets[i, j]);
-
-                    // Set the WinningPlayerName equal to the playername
-                    this.GetComponent<State>().WinningPlayerName = PlayerNames[i];
-                    // Change the player's sprit to the correspondent Lit sprite
-                    PlayerButtons[i].image.overrideSprite = PlayerSpritesLit[i];
-                    // Loop to calculate his earnings
-                    for (int k = 1; k <= PlayerBets[i, j]; k++)
+                    // Check if they did bet on the number and if the number won
+                    if (PlayerBets[i, j] > 0 && j == WinningNumber)
                     {
-                        // Checking if this is the last iteration
-                        if (k == PlayerBets[i, j])
+                        // Since we are in here, we are going to show awards
+                        ShowingAwards = true;
+                        // Set the WinningPlayerName equal to the playername
+                        this.GetComponent<State>().WinningPlayerName = PlayerNames[i];
+                        // Change the player's sprit to the correspondent Lit sprite
+                        PlayerButtons[i].image.overrideSprite = PlayerSpritesLit[i];
+                        // Loop to calculate his earnings
+                        for (int k = 1; k <= PlayerBets[i, j]; k++)
                         {
-                            // Change Text size/color and enabble outline to emphasize the sum of his earnings
-                            MessagePanel.GetComponentInChildren<Text>().fontSize = 85;
-                            MessagePanel.GetComponentInChildren<Text>().color = Color.white;
-                            MessagePanel.GetComponentInChildren<Outline>().enabled = true;
-                            // Set the WinningAmmount as the iteration number * 5 (Pesos)
-                            this.GetComponent<State>().WinningAmount = (k * 5).ToString();
-                            // Play a tick sound
-                            this.GetComponent<AudioSource>().clip = TickSound;
-                            this.GetComponent<AudioSource>().Play();
-                            // Wait 0.5 seconds (a little more than normal)
-                            yield return new WaitForSeconds(0.5f);
-                        }
-                        //else (on all rest iterations)
-                        else
-                        {
-                            // Keep the Text size/color as default and disable outline component
-                            MessagePanel.GetComponentInChildren<Text>().fontSize = 75;
-                            MessagePanel.GetComponentInChildren<Text>().color = Color.black;
-                            MessagePanel.GetComponentInChildren<Outline>().enabled = false;
-                            // Set the WinningAmmount as the iteration number * 5 (Pesos)
-                            this.GetComponent<State>().WinningAmount = (k * 5).ToString();
-                            // Play a tick sound
-                            this.GetComponent<AudioSource>().clip = TickSound;
-                            this.GetComponent<AudioSource>().Play();
-                            // Wait 0.1 second
-                            yield return new WaitForSeconds(0.1f);
-                        }
-                    }
-                    // Going for 2nd time on the same iteration to show the credits earned
-                    for (int k = 1; k <= PlayerBets[i, j]; k++)
-                    {
-                        // Checking if this is the last iteration
-                        if (k == PlayerBets[i, j])
-                        {
-                            // For loop to show the earned credits 1 by 1 (each credit that was bet on winning number, gives 12 credits as earning)
-                            for (int CreditAddition = 0; CreditAddition < 12; CreditAddition++)
+                            // Checking if this is the last iteration
+                            if (k == PlayerBets[i, j])
                             {
-                                // if this is the last iteration
-                                if (CreditAddition == 11)
+                                // Change Text size/color and enabble outline to emphasize the sum of his earnings
+                                MessagePanel.GetComponentInChildren<Text>().fontSize = 85;
+                                MessagePanel.GetComponentInChildren<Text>().color = Color.white;
+                                MessagePanel.GetComponentInChildren<Outline>().enabled = true;
+                                // Set the WinningAmmount as the iteration number * 5 (Pesos)
+                                this.GetComponent<State>().WinningAmount = (k * 5).ToString();
+                                // Play a tick sound
+                                this.GetComponent<AudioSource>().clip = TickSound;
+                                this.GetComponent<AudioSource>().Play();
+                                // Wait 0.5 seconds (a little more than normal)
+                                yield return new WaitForSeconds(0.5f);
+                            }
+                            //else (on all rest iterations)
+                            else
+                            {
+                                // Keep the Text size/color as default and disable outline component
+                                MessagePanel.GetComponentInChildren<Text>().fontSize = 75;
+                                MessagePanel.GetComponentInChildren<Text>().color = Color.black;
+                                MessagePanel.GetComponentInChildren<Outline>().enabled = false;
+                                // Set the WinningAmmount as the iteration number * 5 (Pesos)
+                                this.GetComponent<State>().WinningAmount = (k * 5).ToString();
+                                // Play a tick sound
+                                this.GetComponent<AudioSource>().clip = TickSound;
+                                this.GetComponent<AudioSource>().Play();
+                                // Wait 0.1 second
+                                yield return new WaitForSeconds(0.1f);
+                            }
+                        }
+                        // Going for 2nd time on the same iteration to show the credits earned
+                        for (int k = 1; k <= PlayerBets[i, j]; k++)
+                        {
+                            // Checking if this is the last iteration
+                            if (k == PlayerBets[i, j])
+                            {
+                                // For loop to show the earned credits 1 by 1 (each credit that was bet on winning number, gives 12 credits as earning)
+                                for (int CreditAddition = 0; CreditAddition < 12; CreditAddition++)
                                 {
-                                    // Change the Text size/color and enable Outline to emphasize on the earnings
-                                    PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 50;
-                                    PlayerButtons[i].GetComponentInChildren<Text>().color = Color.white;
-                                    PlayerButtons[i].GetComponentInChildren<Outline>().enabled = true;
-                                    // Increment the PlayerCredits by 1
-                                    PlayerCredits[i] = PlayerCredits[i] + 1;
-                                    // Play a tick sound
-                                    this.GetComponent<AudioSource>().clip = TickSound;
-                                    this.GetComponent<AudioSource>().Play();
-                                    // Show the increment to the user
-                                    KeepPlayerCreditsUpdated();
-                                    // Wait for 0.5 second
-                                    yield return new WaitForSeconds(0.5f);
+                                    // if this is the last iteration
+                                    if (CreditAddition == 11)
+                                    {
+                                        // Change the Text size/color and enable Outline to emphasize on the earnings
+                                        PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 50;
+                                        PlayerButtons[i].GetComponentInChildren<Text>().color = Color.white;
+                                        PlayerButtons[i].GetComponentInChildren<Outline>().enabled = true;
+                                        // Increment the PlayerCredits by 1
+                                        PlayerCredits[i] = PlayerCredits[i] + 1;
+                                        // Play a tick sound
+                                        this.GetComponent<AudioSource>().clip = TickSound;
+                                        this.GetComponent<AudioSource>().Play();
+                                        // Show the increment to the user
+                                        KeepPlayerCreditsUpdated();
+                                        // Wait for 0.5 second
+                                        yield return new WaitForSeconds(0.5f);
+                                    }
+                                    // else for rest iterations
+                                    else
+                                    {
+                                        // Keep the Text size/color as default and disable outline component
+                                        PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
+                                        PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
+                                        PlayerButtons[i].GetComponentInChildren<Outline>().enabled = false;
+                                        // Increment the PlayerCredits by 1
+                                        PlayerCredits[i] = PlayerCredits[i] + 1;
+                                        // Play a tick sound
+                                        this.GetComponent<AudioSource>().clip = TickSound;
+                                        this.GetComponent<AudioSource>().Play();
+                                        // Show the increment to the user
+                                        KeepPlayerCreditsUpdated();
+                                        // Wait for 0.05 second
+                                        yield return new WaitForSeconds(0.05f);
+                                    }
                                 }
-                                // else for rest iterations
-                                else
+                            }
+                            // else for all rest iterations
+                            else
+                            {
+                                // For loop to show the earned credits 1 by 1 (each credit that was bet on winning number, gives 12 credits as earning)
+                                for (int CreditAddition = 0; CreditAddition < 12; CreditAddition++)
                                 {
                                     // Keep the Text size/color as default and disable outline component
                                     PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
                                     PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
                                     PlayerButtons[i].GetComponentInChildren<Outline>().enabled = false;
-                                    // Increment the PlayerCredits by 1
+                                    // Increment PlayerCredits by 1
                                     PlayerCredits[i] = PlayerCredits[i] + 1;
                                     // Play a tick sound
                                     this.GetComponent<AudioSource>().clip = TickSound;
@@ -461,42 +498,21 @@ public class GameController : MonoBehaviour
                                 }
                             }
                         }
-                        // else for all rest iterations
-                        else
-                        {
-                            // For loop to show the earned credits 1 by 1 (each credit that was bet on winning number, gives 12 credits as earning)
-                            for (int CreditAddition = 0; CreditAddition < 12; CreditAddition++)
-                            {
-                                // Keep the Text size/color as default and disable outline component
-                                PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
-                                PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
-                                PlayerButtons[i].GetComponentInChildren<Outline>().enabled = false;
-                                // Increment PlayerCredits by 1
-                                PlayerCredits[i] = PlayerCredits[i] + 1;
-                                // Play a tick sound
-                                this.GetComponent<AudioSource>().clip = TickSound;
-                                this.GetComponent<AudioSource>().Play();
-                                // Show the increment to the user
-                                KeepPlayerCreditsUpdated();
-                                // Wait for 0.05 second
-                                yield return new WaitForSeconds(0.05f);
-                            }
-                        }
+                        // Change MessagePanel Text size/color to default and disable outline component
+                        MessagePanel.GetComponentInChildren<Text>().fontSize = 75;
+                        MessagePanel.GetComponentInChildren<Text>().color = Color.black;
+                        MessagePanel.GetComponentInChildren<Outline>().enabled = false;
+                        // Change the playerbutton Text size/color to default and disable outline component
+                        PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
+                        PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
+                        PlayerButtons[i].GetComponentInChildren<Outline>().enabled = false;
                     }
-                    // Change MessagePanel Text size/color to default and disable outline component
-                    MessagePanel.GetComponentInChildren<Text>().fontSize = 75;
-                    MessagePanel.GetComponentInChildren<Text>().color = Color.black;
-                    MessagePanel.GetComponentInChildren<Outline>().enabled = false;
-                    // Change the playerbutton Text size/color to default and disable outline component
-                    PlayerButtons[i].GetComponentInChildren<Text>().fontSize = 25;
-                    PlayerButtons[i].GetComponentInChildren<Text>().color = Color.black;
-                    PlayerButtons[i].GetComponentInChildren<Outline>().enabled = false;
                 }
+                // Set the Player sprite to normal sprite again
+                PlayerButtons[i].image.overrideSprite = PlayerSprites[i];
+                // Wait 0.25second for the next player
+                yield return new WaitForSeconds(0.25f);
             }
-            // Set the Player sprite to normal sprite again
-            PlayerButtons[i].image.overrideSprite = PlayerSprites[i];
-            // Wait 0.25second for the next player
-            yield return new WaitForSeconds(0.25f);
         }
 
         // If there is no winner
@@ -561,7 +577,6 @@ public class GameController : MonoBehaviour
 
     // Function to empty all bets
 	public void EmptyAllPlayerBets(){
-		Debug.Log ("Clear Bets");
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 13; j++) {
 				PlayerBets [i, j] = 0;
@@ -684,7 +699,6 @@ public class GameController : MonoBehaviour
     // Function to be called when user double clicks cancel button (cancels all his bets)
     public void CancelDblClick()
     {
-        Debug.Log("Inside Cancel Double Click for " + ActivePlayer);
         for (int i = 0; i < 8; i++)
         {
             if (PlayerNames[i].Equals(ActivePlayer))
