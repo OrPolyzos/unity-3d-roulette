@@ -52,7 +52,7 @@ public class PanelMovement : MonoBehaviour {
             if (EventSystem.GetComponent<GameController>().ShowingAwards)
             {
                 this.transform.GetChild(0).GetComponent<Text>().text =
-                EventSystem.GetComponent<State>().WinningPlayerName + " Won: " + EventSystem.GetComponent<State>().WinningAmount + " pesos";
+               "WIN: " + EventSystem.GetComponent<State>().WinningAmount + " PESOS";
             }
             else
             {
